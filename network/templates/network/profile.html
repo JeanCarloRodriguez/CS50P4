@@ -1,0 +1,45 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+
+{% block script %}
+    <script type="module" src="{% static 'network/helper.js' %}"></script>
+    <script type="module" src="{% static 'network/profile.js' %}"></script>
+{% endblock script %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <div class="container mt-3" id="profile">
+            <h2>
+                <span id="profile_user_name" value={{ profile_user_name }}>
+                    {{ profile_user_name }}
+                    <button style="display:none" id="follow_button" class="btn btn-primary" ></button>
+                </span>
+            </h2>
+            <div id="follow">
+                Following: <span id="following"> 0 </span>
+                Followers:<span id="followers"> 0 </span>
+            </div> 
+            <input type="hidden" id="profile_user_id" value="{{ profile_user_id}}">
+            <input type="hidden" id="current_user_id" value="{{ request.user.id}}">
+        </div>
+
+        <div class="container mt-3" id="new_post">
+            <div class="row mt-1">
+                <div class="col-12">
+                    <form id="new-post-form" method="POST">
+                        <span class="new-post"><b>New Post</b></span>
+                        <br>
+                        <textarea id="content-form" class="col-12"></textarea>
+                        <br>
+                        <input class="btn btn-primary" type="submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+    
+    <div class="container mt-4" id="profile-posts"></div>
+
+{% endblock %}
