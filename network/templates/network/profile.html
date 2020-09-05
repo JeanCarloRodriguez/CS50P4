@@ -24,22 +24,78 @@
             <input type="hidden" id="current_user_id" value="{{ request.user.id}}">
         </div>
 
-        <div class="container mt-3" id="new_post">
-            <div class="row mt-1">
-                <div class="col-12">
-                    <form id="new-post-form" method="POST">
-                        <span class="new-post"><b>New Post</b></span>
-                        <br>
-                        <textarea id="content-form" class="col-12"></textarea>
-                        <br>
-                        <input class="btn btn-primary" type="submit">
-                    </form>
+        {% if profile_user_id == request.user.id %}
+        
+            <div class="container mt-3" id="new_post">
+                <div class="row mt-1">
+                    <div class="col-12">
+                        <form id="new-post-form" method="POST">
+                            <span class="new-post"><b>New Post</b></span>
+                            <br>
+                            <textarea id="content-form" class="col-12"></textarea>
+                            <br>
+                            <input class="btn btn-primary" type="submit">
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        
+        {% endif %}
+
 
     {% endif %}
     
-    <div class="container mt-4" id="profile-posts"></div>
+    <div class="container mt-4" id="profile-posts">
+    
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if posts.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'profile_view' user.username %}?page={{ posts.previous_page_number }}">Previous Page</a>
+                    </li>
+                {% endif %}
+                {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'profile_view' user.username %}?page={{ posts.next_page_number }}">Next Page</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        {% for post in posts %}
+            <div  class="row mt-1">
+                <div class="col-12">
+                    <a class="poster" value="{{ post.user.id }}"  href="{% url 'profile_view' post.user.username %}">{{ post.user.username }}</a>
+                    <br />
+                    <br />
+                    {% if post.user.id == request.user.id %}
+                        <a class="edit" value="{{ post.id }}" href="">Edit</a>
+                    {% endif %}
+                    <p class="content"> {{ post.content }}</p>
+                    <span class="timestamp"> </span>
+                    <br />
+                    <span class="likes">{{ post.likes }}</span>
+                    <br />
+                    <a class="comment">comment</a>
+                </div>
+            </div>
+        {% endfor %}
+        
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if posts.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'profile_view' user.username %}?page={{ posts.previous_page_number }}">Previous Page</a>
+                    </li>
+                {% endif %}
+                {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'profile_view' user.username %}?page={{ posts.next_page_number }}">Next Page</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+    </div>
 
 {% endblock %}

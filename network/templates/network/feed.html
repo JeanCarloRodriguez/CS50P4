@@ -1,0 +1,70 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+
+{% block script %}
+    <script type="module" src="{% static 'network/feed.js' %}"></script>
+{% endblock script %}
+
+{% block body %}
+    {% if option == "all" %}
+        <h2 id="header" class="container mt-4">All Posts</h2>
+    {% endif %}
+    {% if option == "followings" %}
+        <h2 id="header" class="container mt-4">Followings Posts</h2>
+    {% endif %}
+    <input type="hidden" id="userid" value="{{ request.user.id}}">
+    <div class="container mt-4" id="posts">
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if posts.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'feed' option %}?page={{ posts.previous_page_number }}">Previous Page</a>
+                    </li>
+                {% endif %}
+                {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'feed' option %}?page={{ posts.next_page_number }}">Next Page</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        {% for post in posts %}
+            <div  class="row mt-1">
+                <div class="col-12">
+                    <a class="poster" value="{{ post.user.id }}"  href="{% url 'profile_view' post.user.username %}">{{ post.user.username }}</a>
+                    <br />
+                    <br />
+                    {% if post.user.id == request.user.id %}
+                        <a class="edit" value="{{ post.id }}" href="">Edit</a>
+                    {% endif %}
+                    <p class="content"> {{ post.content }}</p>
+                    <span class="timestamp"> </span>
+                    <br />
+                    <span class="likes">{{ post.likes }}</span>
+                    <br />
+                    <a class="comment">comment</a>
+                </div>
+            </div>
+        {% endfor %}
+        
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if posts.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'feed' option %}?page={{ posts.previous_page_number }}">Previous Page</a>
+                    </li>
+                {% endif %}
+                {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'feed' option %}?page={{ posts.next_page_number }}">Next Page</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+    </div>
+
+{% endblock %}

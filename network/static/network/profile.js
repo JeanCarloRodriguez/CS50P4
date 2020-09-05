@@ -7,18 +7,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let profileUserid = parseInt(document.querySelector("#profile_user_id").value)
     let currentUserid = parseInt(document.querySelector("#current_user_id").value)
     
-    document.querySelector("#new-post-form").addEventListener("submit", (event) => {
-        event.preventDefault();
-        let content = document.querySelector("#content-form").value
-        fetch("post/new_post", {
-            method: "POST",
-            body: JSON.stringify({ content: content })
-        })
-        .then(() => {
-            posts_div.innerHTML = ""
-            document.querySelector("#content-form").value = ""
-            manageProfileContent()
-        });
+    document.querySelectorAll("#new-post-form").forEach(item => {
+        item.addEventListener("submit", (event) => {
+            event.preventDefault();
+            let content = document.querySelector("#content-form").value
+            fetch("post/new_post", {
+                method: "POST",
+                body: JSON.stringify({ content: content })
+            }).then(() => {
+                posts_div.innerHTML = ""
+                document.querySelector("#content-form").value = ""
+                manageProfileContent()
+            });
+        }) 
     })  
     
     manageProfileContent()
@@ -51,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
             
-            return drawPosts(profile.posts, posts_div, profileUserid)
+            // return drawPosts(profile.posts, posts_div, profileUserid)
         })
     }
 })

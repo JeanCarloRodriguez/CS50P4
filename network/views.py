@@ -7,13 +7,14 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator, EmptyPage 
 
 from .models import User, Post, Follow
 
 
 def index(request):
     if request.user.is_authenticated:
-        return render(request, "network/index.html")
+        return feed(request, "all")
     else:
         return login_view(request)
 
@@ -77,10 +78,40 @@ def register(request):
 @login_required(login_url='/login', redirect_field_name='')
 def profile_view(request, username):
     user = User.objects.get(username=username)
+    posts = user.posts.all().order_by("-timestamp")
+
+    paginator = Paginator(posts, 10)
+    page_num = request.GET.get("page", 1)
+    try:
+        page = paginator.page(page_num)
+    except EmptyPage:
+        page = paginator.page(1)
+
     return render(request, "network/profile.html", { 
         "profile_user_id": user.id,
-        "profile_user_name": user.username 
+        "profile_user_name": user.username,
+        "posts": page
     })
+
+def feed(request, option):
+    if option.lower() == "all":
+        posts = Post.objects.all().order_by("-timestamp")
+    elif option.lower() == "followings":
+        followings = request.user.serialize()["followings"]
+        posts = Post.objects.filter(user__pk__in=followings).order_by("-timestamp")
+
+    paginator = Paginator(posts, 10)
+    page_num = request.GET.get("page", 1)
+    try:
+        page = paginator.page(page_num)
+    except EmptyPage:
+        page = paginator.page(1)
+
+    return render(request, "network/feed.html", {
+        "posts": page,
+        "option": option
+    })
+
 
 
 # Def related to API
