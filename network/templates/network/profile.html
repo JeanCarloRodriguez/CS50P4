@@ -3,7 +3,7 @@
 
 
 {% block script %}
-    <script type="module" src="{% static 'network/helper.js' %}"></script>
+    <script type="module" src="{% static 'network/feed.js' %}"></script>
     <script type="module" src="{% static 'network/profile.js' %}"></script>
 {% endblock script %}
 
@@ -20,8 +20,8 @@
                 Following: <span id="following"> 0 </span>
                 Followers:<span id="followers"> 0 </span>
             </div> 
+            <input type="hidden" id="userid" value="{{ request.user.id}}">
             <input type="hidden" id="profile_user_id" value="{{ profile_user_id}}">
-            <input type="hidden" id="current_user_id" value="{{ request.user.id}}">
         </div>
 
         {% if profile_user_id == request.user.id %}
@@ -34,7 +34,7 @@
                             <br>
                             <textarea id="content-form" class="col-12"></textarea>
                             <br>
-                            <input class="btn btn-primary" type="submit">
+                            <input class="btn btn-primary mb-1" type="submit">
                         </form>
                     </div>
                 </div>
@@ -65,16 +65,21 @@
         {% for post in posts %}
             <div  class="row mt-1">
                 <div class="col-12">
-                    <a class="poster" value="{{ post.user.id }}"  href="{% url 'profile_view' post.user.username %}">{{ post.user.username }}</a>
+                    <a class="poster" value="{{ post.userid }}"  href="{% url 'profile_view' post.username %}">{{ post.username }}</a>
                     <br />
                     <br />
-                    {% if post.user.id == request.user.id %}
+                    {% if post.userid == request.user.id %}
                         <a class="edit" value="{{ post.id }}" href="">Edit</a>
                     {% endif %}
                     <p class="content"> {{ post.content }}</p>
-                    <span class="timestamp"> </span>
+                    <span class="timestamp"> {{ post.timestamp }} </span>
                     <br />
-                    <span class="likes">{{ post.likes }}</span>
+                    <span class="likes" value="{{ post }}">
+                        <div class="image-box">
+                            <a><img src="{% static "network/likebutton.png" %}" alt="Like"></a>
+                            <span class="likes-counter"></span>
+                        </div>
+                    </span>
                     <br />
                     <a class="comment">comment</a>
                 </div>

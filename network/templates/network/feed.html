@@ -32,18 +32,25 @@
         </nav>
 
         {% for post in posts %}
-            <div  class="row mt-1">
+            <div id="{{ post.id }}" class="row mt-1">
                 <div class="col-12">
-                    <a class="poster" value="{{ post.user.id }}"  href="{% url 'profile_view' post.user.username %}">{{ post.user.username }}</a>
+                    <a class="poster" value="{{ post.userid }}"  href="{% url 'profile_view' post.username %}">{{ post.username }}</a>
                     <br />
                     <br />
-                    {% if post.user.id == request.user.id %}
+                    {% if post.userid == request.user.id %}
                         <a class="edit" value="{{ post.id }}" href="">Edit</a>
                     {% endif %}
                     <p class="content"> {{ post.content }}</p>
-                    <span class="timestamp"> </span>
+                    <span class="timestamp">{{ post.timestamp }}</span>
                     <br />
-                    <span class="likes">{{ post.likes }}</span>
+                    <span class="likes" value="{{ post }}">
+                    
+                        <div class="image-box">
+                         
+                            <a><img src="{% static "network/likebutton.png" %}" alt="Like"></a>
+                            <span class="likes-counter"></span>
+                        </div>
+                    </span>
                     <br />
                     <a class="comment">comment</a>
                 </div>

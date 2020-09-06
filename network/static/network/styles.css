@@ -19,3 +19,26 @@
     font-size: 15px;
     color: #007bff;
 }
+
+div.image-box {
+    height: 30px;
+    width: 30px;
+    display: inline-block;
+}
+
+div.image-box img {
+    max-height: 100%;
+    max-width: 100%;
+    
+}
+
+img.liked {
+    opacity: 1;
+}
+img.noliked {
+    opacity: 0.4;
+}
+
+.likes-counter {
+    color: #007bff;
+}

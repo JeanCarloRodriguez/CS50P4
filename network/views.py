@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage 
 
-from .models import User, Post, Follow
+from .models import User, Post, Follow, Like
 
 
 def index(request):
@@ -79,6 +79,8 @@ def register(request):
 def profile_view(request, username):
     user = User.objects.get(username=username)
     posts = user.posts.all().order_by("-timestamp")
+    
+    posts = [post.serialize() for post in posts]
 
     paginator = Paginator(posts, 10)
     page_num = request.GET.get("page", 1)
@@ -99,6 +101,8 @@ def feed(request, option):
     elif option.lower() == "followings":
         followings = request.user.serialize()["followings"]
         posts = Post.objects.filter(user__pk__in=followings).order_by("-timestamp")
+
+    posts = [post.serialize() for post in posts]
 
     paginator = Paginator(posts, 10)
     page_num = request.GET.get("page", 1)
@@ -204,8 +208,30 @@ def follow(request, userid):
 def unfollow(request, userid):
     if request.method == "POST":
         famous = User.objects.get(id=userid)
-        print("famoso " + famous.__str__())
         follow = famous.followers.get(follower=request.user)
-        print("follow " + follow.__str__())
         follow.delete()
         return HttpResponse(status=204)
+
+@csrf_exempt
+@login_required
+def like(request, postid):
+    if request.method == "POST":
+        post = Post.objects.get(pk=postid)
+        like = Like(post=post, liker=request.user)
+        try:
+            like.save()
+            return JsonResponse(post.serialize())
+        except:
+            return HttpResponse(status=204)
+
+@csrf_exempt
+@login_required
+def unlike(request, postid):
+    if request.method == "POST":
+        post = Post.objects.get(pk=postid)
+        like = Like.objects.get(post=post, liker=request.user)
+        try:
+            like.delete()
+            return JsonResponse(post.serialize())
+        except:
+            return HttpResponse(status=204)
